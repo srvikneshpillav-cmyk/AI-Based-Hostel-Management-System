@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Food Menu</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- MAIN CONTENT ONLY (Student/Admin both can reuse) -->
+    <div class="main">
+        <div class="header">Weekly Food Menu</div>
+
+        <table>
+            <tr>
+                <th>Day</th>
+                <th>Breakfast</th>
+                <th>Lunch</th>
+                <th>Dinner</th>
+            </tr>
+
+            {% for f in menu %}
+            <tr>
+                <td>{{ f.day }}</td>
+                <td>{{ f.breakfast }}</td>
+                <td>{{ f.lunch }}</td>
+                <td>{{ f.dinner }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% if not menu %}
+            <p style="margin-top:20px; color:red;">
+                No food menu available.
+            </p>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>

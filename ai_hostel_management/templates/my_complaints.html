@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Complaints</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="main">
+        <div class="header">My Complaints Status</div>
+
+        {% if complaints %}
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Complaint</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+
+            {% for c in complaints %}
+            <tr>
+                <td>{{ c.id }}</td>
+                <td>{{ c.complaint }}</td>
+                <td>
+                    {% if c.status == 'Pending' %}
+                        <span class="badge pending">Pending</span>
+                    {% else %}
+                        <span class="badge approved">Resolved</span>
+                    {% endif %}
+                </td>
+                <td>{{ c.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p style="color:red;">You have not submitted any complaints.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>
+

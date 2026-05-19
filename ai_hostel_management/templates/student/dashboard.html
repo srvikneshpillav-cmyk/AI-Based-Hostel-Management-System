@@ -1,0 +1,475 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+{% block header %}Welcome Back, {{ session.get('full_name', session.get('username')) }}{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-main {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-top: 4px solid;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        opacity: 0.1;
+        background: currentColor;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .stat-card.primary { border-top-color: #667eea; color: #667eea; }
+    .stat-card.warning { border-top-color: #f59e0b; color: #f59e0b; }
+    .stat-card.success { border-top-color: #10b981; color: #10b981; }
+    .stat-card.danger { border-top-color: #ef4444; color: #ef4444; }
+
+    .stat-card-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .stat-card-label {
+        font-size: 0.85rem;
+        color: #6b7280;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .stat-card-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0;
+        color: inherit;
+    }
+
+    .stat-card-meta {
+        font-size: 0.8rem;
+        color: #9ca3af;
+        margin-top: 0.5rem;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .action-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        border-radius: 16px;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .action-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        margin-top: -50px;
+        margin-right: -50px;
+    }
+
+    .action-card:nth-child(2) {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .action-card:nth-child(3) {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .action-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .action-card-icon {
+        font-size: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .action-card-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Content Panels */
+    .content-panel {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .panel-header {
+        padding: 2rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .panel-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #1f2937;
+    }
+
+    .panel-header p {
+        color: #6b7280;
+        margin-top: 0.5rem;
+    }
+
+    .panel-content {
+        padding: 2rem;
+    }
+
+    .complaints-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .complaints-table th {
+        background: #f8fafc;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        border-bottom: 2px solid #e5e7eb;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+    }
+
+    .complaints-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .complaints-table tr:hover {
+        background: #f9fafb;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .badge.pending { background: #fef3c7; color: #b45309; }
+    .badge.in-progress { background: #dbeafe; color: #0369a1; }
+    .badge.resolved { background: #dcfce7; color: #15803d; }
+    .badge.rejected { background: #fee2e2; color: #b91c1c; }
+
+    /* Side Panel */
+    .side-panel {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 2rem;
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+
+    .side-panel-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .user-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .user-info h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #1f2937;
+        font-weight: 700;
+    }
+
+    .user-info p {
+        margin: 0.25rem 0 0 0;
+        font-size: 0.85rem;
+        color: #6b7280;
+    }
+
+    .side-stat {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .side-stat:last-of-type {
+        border-bottom: none;
+    }
+
+    .side-stat-label {
+        font-size: 0.9rem;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .side-stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .side-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 2rem;
+    }
+
+    .side-btn {
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .side-btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .side-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .side-btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+    }
+
+    .side-btn-secondary:hover {
+        background: #e5e7eb;
+        border-color: #d1d5db;
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 2rem;
+        color: #6b7280;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            grid-template-columns: 1fr;
+        }
+
+        .side-panel {
+            position: static;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="dashboard-main">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card primary">
+                <i class="fas fa-comments stat-card-icon"></i>
+                <p class="stat-card-label">Total Complaints</p>
+                <p class="stat-card-value">{{ complaints_count }}</p>
+                <p class="stat-card-meta">Submitted from your account</p>
+            </div>
+
+            <div class="stat-card warning">
+                <i class="fas fa-hourglass-half stat-card-icon"></i>
+                <p class="stat-card-label">Pending</p>
+                <p class="stat-card-value">{{ pending_leaves }}</p>
+                <p class="stat-card-meta">Awaiting admin review</p>
+            </div>
+
+            <div class="stat-card success">
+                <i class="fas fa-calendar-check stat-card-icon"></i>
+                <p class="stat-card-label">Leave Requests</p>
+                <p class="stat-card-value">0</p>
+                <p class="stat-card-meta">Approved by admin</p>
+            </div>
+
+            <div class="stat-card danger">
+                <i class="fas fa-bell stat-card-icon"></i>
+                <p class="stat-card-label">Notices</p>
+                <p class="stat-card-value">{{ recent_notices|length }}</p>
+                <p class="stat-card-meta">Latest announcements</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="{{ url_for('student.create_complaint') }}" class="action-card">
+                <i class="fas fa-pen action-card-icon"></i>
+                <p class="action-card-title">New Complaint</p>
+            </a>
+
+            <a href="{{ url_for('student.request_leave') }}" class="action-card">
+                <i class="fas fa-plane action-card-icon"></i>
+                <p class="action-card-title">Apply Leave</p>
+            </a>
+
+            <a href="{{ url_for('student.notices') }}" class="action-card">
+                <i class="fas fa-bell action-card-icon"></i>
+                <p class="action-card-title">View Notices</p>
+            </a>
+        </div>
+
+        <!-- Recent Complaints -->
+        <div class="content-panel">
+            <div class="panel-header">
+                <div>
+                    <h2>Recent Complaints</h2>
+                    <p>Track the status of your latest submissions</p>
+                </div>
+                <a href="{{ url_for('student.complaints') }}" style="padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 12px; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.background='#764ba2'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#667eea'; this.style.transform='translateY(0)';">
+                    View All
+                </a>
+            </div>
+            <div class="panel-content">
+                <table class="complaints-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="3" class="empty-message">No complaints yet. Start by filing a new complaint!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Side Panel -->
+    <aside class="side-panel">
+        <div class="side-panel-header">
+            <div class="user-avatar">
+                {{ session.get('full_name', session.get('username'))[0]|upper }}
+            </div>
+            <div class="user-info">
+                <h3>{{ session.get('full_name', 'Student') }}</h3>
+                <p>{{ session.get('username') }}</p>
+            </div>
+        </div>
+
+        <div class="side-stat">
+            <span class="side-stat-label"><i class="fas fa-list" style="margin-right: 0.5rem; color: #667eea;"></i>Total Complaints</span>
+            <span class="side-stat-value">{{ complaints_count }}</span>
+        </div>
+
+        <div class="side-stat">
+            <span class="side-stat-label"><i class="fas fa-spinner" style="margin-right: 0.5rem; color: #f59e0b;"></i>Pending</span>
+            <span class="side-stat-value" style="color: #f59e0b; -webkit-text-fill-color: unset; background: none;">{{ pending_leaves }}</span>
+        </div>
+
+        <div class="side-stat">
+            <span class="side-stat-label"><i class="fas fa-file-text" style="margin-right: 0.5rem; color: #10b981;"></i>Notices</span>
+            <span class="side-stat-value" style="color: #10b981; -webkit-text-fill-color: unset; background: none;">{{ recent_notices|length }}</span>
+        </div>
+
+        <div class="side-actions">
+            <a href="{{ url_for('student.create_complaint') }}" class="side-btn side-btn-primary">
+                <i class="fas fa-plus"></i> New Complaint
+            </a>
+            <a href="{{ url_for('student.complaints') }}" class="side-btn side-btn-secondary">
+                <i class="fas fa-history"></i> History
+            </a>
+        </div>
+    </aside>
+</div>
+{% endblock %}

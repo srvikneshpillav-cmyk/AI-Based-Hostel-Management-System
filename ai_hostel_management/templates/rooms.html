@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Available Rooms</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="main">
+        <div class="header">Room Availability</div>
+
+        <table>
+            <tr>
+                <th>Room Number</th>
+                <th>Total Beds</th>
+                <th>Available Beds</th>
+                <th>Status</th>
+            </tr>
+
+            {% for r in rooms %}
+            <tr>
+                <td>{{ r.room_number }}</td>
+                <td>{{ r.total_beds }}</td>
+                <td>{{ r.available_beds }}</td>
+                <td>
+                    {% if r.status == 'Available' %}
+                        <span class="badge approved">Available</span>
+                    {% else %}
+                        <span class="badge pending">Full</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% if not rooms %}
+            <p style="margin-top:20px; color:red;">
+                No room data available.
+            </p>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>
+

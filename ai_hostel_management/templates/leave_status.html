@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Leave Status{% endblock %}
+{% block eyebrow %}Student portal{% endblock %}
+{% block page_title %}My Leave Requests{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel__header">
+        <div>
+            <h2>Leave Request History</h2>
+            <p>Track approvals, rejections, and pending leave applications.</p>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Reason</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Status</th>
+                    <th>Applied On</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leave in leaves %}
+                <tr>
+                    <td>{{ leave.reason }}</td>
+                    <td>{{ leave.from_date }}</td>
+                    <td>{{ leave.to_date }}</td>
+                    <td><span class="badge {{ leave.status|lower }}">{{ leave.status }}</span></td>
+                    <td>{{ leave.applied_on.strftime('%d %b %Y, %I:%M %p') if leave.applied_on else '-' }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="fa-solid fa-calendar-xmark"></i>
+                            <h3>No leave requests yet</h3>
+                            <p>Submit a leave request and it will appear here with its status.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fees Status</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="main">
+        <div class="header">Fees Status</div>
+
+        {% if fee %}
+            <div class="card" style="max-width:400px;">
+                <p><b>Total Fee:</b> ₹{{ fee.total_fee }}</p>
+                <p><b>Paid Fee:</b> ₹{{ fee.paid_fee }}</p>
+                <p><b>Due Fee:</b> ₹{{ fee.due_fee }}</p>
+
+                <p>
+                    <b>Status:</b>
+                    {% if fee.status == 'Paid' %}
+                        <span class="badge approved">Paid</span>
+                    {% else %}
+                        <span class="badge pending">Pending</span>
+                    {% endif %}
+                </p>
+            </div>
+        {% else %}
+            <p style="color:red;">No fee record found.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>
+
+

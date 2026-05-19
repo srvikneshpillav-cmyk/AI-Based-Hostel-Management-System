@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Notices | Admin{% endblock %}
+{% block eyebrow %}Admin workspace{% endblock %}
+{% block page_title %}Notice Board{% endblock %}
+
+{% block content %}
+<section class="stack">
+    <div class="section-header">
+        <div>
+            <h2>Published Notices</h2>
+            <p>Manage hostel announcements with a richer card-based layout.</p>
+        </div>
+        <a href="{{ url_for('add_notice') }}" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add Notice</span>
+        </a>
+    </div>
+
+    <div class="notice-list">
+        {% for notice in notices %}
+        <article class="notice-card">
+            <div class="section-header">
+                <div>
+                    <h2>{{ notice.title }}</h2>
+                    <p>{{ notice.created_at.strftime('%d %b %Y, %I:%M %p') if notice.created_at else '' }}</p>
+                </div>
+                <div class="actions">
+                    <span class="badge {{ notice.priority|lower }}">{{ notice.priority }}</span>
+                    {% if notice.is_new %}
+                    <span class="badge info">New</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <p class="muted">{{ notice.description }}</p>
+
+            {% if notice.image %}
+            <img src="{{ url_for('static', filename='uploads/' ~ notice.image) }}" alt="{{ notice.title }}">
+            {% endif %}
+
+            <div class="notice-card__meta">
+                <span class="helper-text">Visible to all students</span>
+                <a href="{{ url_for('delete_notice', notice_id=notice.id) }}" class="btn btn-danger">
+                    <i class="fa-solid fa-trash"></i>
+                    <span>Delete</span>
+                </a>
+            </div>
+        </article>
+        {% else %}
+        <div class="panel empty-state">
+            <i class="fa-solid fa-bullhorn"></i>
+            <h3>No notices published</h3>
+            <p>Create the first notice to share an update with students.</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

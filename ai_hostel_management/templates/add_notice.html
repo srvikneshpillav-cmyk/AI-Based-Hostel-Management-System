@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Notice</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="main">
+        <div class="header">Add New Notice</div>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <input type="text" name="title" placeholder="Notice Title" required>
+            <br><br>
+
+            <textarea name="description" rows="5" placeholder="Notice Description" required></textarea>
+            <br><br>
+
+            <!-- Priority -->
+            <label><b>Priority</b></label><br>
+            <select name="priority">
+                <option value="NORMAL">Normal</option>
+                <option value="HIGH">High</option>
+            </select>
+            <br><br>
+
+            <!-- Image -->
+            <label><b>Upload Image (jpg / png)</b></label><br>
+            <input type="file" name="image" accept=".jpg,.jpeg,.png">
+            <br><br>
+
+            <button type="submit">Post Notice</button>
+
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Student Notices{% endblock %}
+{% block eyebrow %}Student portal{% endblock %}
+{% block page_title %}Notice Board{% endblock %}
+
+{% block content %}
+<section class="notice-list">
+    {% for notice in notices %}
+    <article class="notice-card">
+        <div class="section-header">
+            <div>
+                <h2>{{ notice.title }}</h2>
+                <p>{{ notice.created_at.strftime('%d %b %Y, %I:%M %p') if notice.created_at else '' }}</p>
+            </div>
+            <div class="actions">
+                <span class="badge {{ notice.priority|lower }}">{{ notice.priority }}</span>
+                {% if notice.is_new %}
+                <span class="badge info">New</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <p class="muted">{{ notice.description }}</p>
+
+        {% if notice.image %}
+        <img src="{{ url_for('static', filename='uploads/' ~ notice.image) }}" alt="{{ notice.title }}">
+        {% endif %}
+    </article>
+    {% else %}
+    <section class="panel empty-state">
+        <i class="fa-solid fa-bell-slash"></i>
+        <h3>No notices available</h3>
+        <p>Important updates from the hostel team will appear here.</p>
+    </section>
+    {% endfor %}
+</section>
+{% endblock %}

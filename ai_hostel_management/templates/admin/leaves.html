@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Leave Requests | Admin{% endblock %}
+{% block eyebrow %}Admin workspace{% endblock %}
+{% block page_title %}Leave Requests{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel__header">
+        <div>
+            <h2>Pending and Processed Leaves</h2>
+            <p>Approve or reject requests directly from the dashboard table.</p>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Student</th>
+                    <th>Period</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leave in leaves %}
+                <tr>
+                    <td>#{{ leave.id }}</td>
+                    <td>{{ leave.username }}</td>
+                    <td>{{ leave.from_date }} to {{ leave.to_date }}</td>
+                    <td>{{ leave.reason }}</td>
+                    <td><span class="badge {{ leave.status|lower }}">{{ leave.status }}</span></td>
+                    <td>
+                        {% if leave.status == 'Pending' %}
+                        <div class="actions">
+                            <a class="btn btn-success" href="{{ url_for('approve_leave', leave_id=leave.id) }}">
+                                <i class="fa-solid fa-check"></i>
+                                <span>Approve</span>
+                            </a>
+                            <a class="btn btn-danger" href="{{ url_for('reject_leave', leave_id=leave.id) }}">
+                                <i class="fa-solid fa-xmark"></i>
+                                <span>Reject</span>
+                            </a>
+                        </div>
+                        {% else %}
+                        <span class="muted">Decision recorded</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <i class="fa-solid fa-calendar-xmark"></i>
+                            <h3>No leave requests</h3>
+                            <p>Leave requests from students will appear here.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

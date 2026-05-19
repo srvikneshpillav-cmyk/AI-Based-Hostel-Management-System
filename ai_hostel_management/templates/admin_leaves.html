@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leave Requests</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>Admin</h2>
+        <a href="/admin">Dashboard</a>
+        <a href="/admin/leaves">Leave Requests</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+
+        <div class="header">Student Leave Requests</div>
+
+        {% if leaves and leaves|length > 0 %}
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Student</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+
+            {% for l in leaves %}
+            <tr>
+                <td>{{ l.id }}</td>
+                <td>{{ l.username }}</td>
+                <td>{{ l.from_date }}</td>
+                <td>{{ l.to_date }}</td>
+                <td>{{ l.reason }}</td>
+                <td>
+                    {% if l.status == 'Pending' %}
+                        <span class="badge pending">Pending</span>
+                    {% elif l.status == 'Approved' %}
+                        <span class="badge approved">Approved</span>
+                    {% else %}
+                        <span class="badge rejected">Rejected</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if l.status == 'Pending' %}
+                        <a href="/approve-leave/{{ l.id }}" class="action-btn approve">
+                            Approve
+                        </a>
+                        <a href="/reject-leave/{{ l.id }}" class="action-btn reject">
+                            Reject
+                        </a>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p style="color:red; font-weight:bold;">
+                No leave requests found.
+            </p>
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

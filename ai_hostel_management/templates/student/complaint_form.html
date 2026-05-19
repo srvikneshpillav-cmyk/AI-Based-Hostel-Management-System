@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}New Complaint{% endblock %}
+{% block eyebrow %}Student portal{% endblock %}
+{% block page_title %}Raise a Complaint{% endblock %}
+
+{% block content %}
+<section class="panel form-card">
+    <div class="panel__header">
+        <div>
+            <h2>Complaint Form</h2>
+            <p>Help the hostel team resolve your issue faster with complete details.</p>
+        </div>
+    </div>
+
+    <form method="POST" data-validate="true" class="form-grid">
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select class="select" id="category" name="category">
+                <option value="General">General</option>
+                <option value="Room">Room</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Food">Food</option>
+                <option value="Internet">Internet</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="username_display">Student</label>
+            <input class="field" id="username_display" type="text" value="{{ session.get('full_name', session.get('username')) }}" disabled>
+        </div>
+
+        <div class="form-group form-group--full">
+            <label for="message">Complaint Details</label>
+            <textarea class="textarea" id="message" name="message" placeholder="Describe the issue, location, and what support you need." required></textarea>
+            <p class="helper-text">Tip: mention room number, floor, or service area for faster resolution.</p>
+        </div>
+
+        <div class="form-group form-group--full">
+            <div class="actions">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Submit Complaint</span>
+                </button>
+                <a class="btn btn-secondary" href="{{ url_for('my_complaints') }}">View My Complaints</a>
+            </div>
+        </div>
+    </form>
+</section>
+{% endblock %}

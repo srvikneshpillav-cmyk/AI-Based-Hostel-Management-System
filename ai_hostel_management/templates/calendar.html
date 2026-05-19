@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Events & Holidays</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>Student</h2>
+        <a href="/student">Dashboard</a>
+        <a href="/notices">Notice Board</a>
+        <a href="/attendance">Attendance</a>
+        <a href="/apply-leave">Apply Leave</a>
+        <a href="/leave-status">My Leaves</a>
+        <a href="/calendar" class="active">Events / Holidays</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+        <div class="header">Events & Holidays</div>
+
+        {% if events and events|length > 0 %}
+        <table>
+            <tr>
+                <th>Event Name</th>
+                <th>Description</th>
+                <th>Date</th>
+            </tr>
+
+            {% for e in events %}
+            <tr>
+                <td>{{ e.title }}</td>
+                <td>{{ e.description }}</td>
+                <td>{{ e.event_date }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p style="color:red; font-weight:bold;">
+                No events or holidays available.
+            </p>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>

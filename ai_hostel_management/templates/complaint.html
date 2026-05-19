@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Complaint</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>Student</h2>
+        <a href="/student">Dashboard</a>
+        <a href="/complaint" class="active">New Complaint</a>
+        <a href="/my-complaints">My Complaints</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+        <div class="header">Submit New Complaint</div>
+
+        <form method="POST">
+
+            <label>Complaint Message</label>
+            <textarea name="message" rows="5" required
+                placeholder="Describe your issue clearly..."></textarea>
+
+            <br><br>
+
+            <button type="submit" class="btn">Submit Complaint</button>
+
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+{% block eyebrow %}Admin workspace{% endblock %}
+{% block page_title %}Dashboard Overview{% endblock %}
+
+{% block content %}
+<section class="dashboard-grid">
+    <div class="stats-grid">
+        <article class="stat-card tone-primary">
+            <div class="stat-card__icon"><i class="fa-solid fa-users"></i></div>
+            <p class="stat-card__label">Total Students</p>
+            <p class="stat-card__value">{{ stats.total_students }}</p>
+            <p class="stat-card__meta">Active hostel residents</p>
+        </article>
+
+        <article class="stat-card tone-blue">
+            <div class="stat-card__icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <p class="stat-card__label">Total Complaints</p>
+            <p class="stat-card__value">{{ stats.total_complaints }}</p>
+            <p class="stat-card__meta">Issues raised across the hostel</p>
+        </article>
+
+        <article class="stat-card tone-orange">
+            <div class="stat-card__icon"><i class="fa-solid fa-calendar-check"></i></div>
+            <p class="stat-card__label">Pending Leave Requests</p>
+            <p class="stat-card__value">{{ stats.pending_leaves }}</p>
+            <p class="stat-card__meta">Requests awaiting approval</p>
+        </article>
+
+        <article class="stat-card tone-rose">
+            <div class="stat-card__icon"><i class="fa-solid fa-bullhorn"></i></div>
+            <p class="stat-card__label">Total Notices</p>
+            <p class="stat-card__value">{{ stats.total_notices }}</p>
+            <p class="stat-card__meta">Announcements published</p>
+        </article>
+    </div>
+
+    <div class="quick-actions">
+        <a class="feature-card" href="{{ url_for('admin_students') }}">
+            <div class="feature-card__icon"><i class="fa-solid fa-user-group"></i></div>
+            <div>
+                <h3>Manage Students</h3>
+                <p>Search profiles, review departments, and monitor hostel occupancy.</p>
+            </div>
+        </a>
+
+        <a class="feature-card" href="{{ url_for('admin_complaints') }}">
+            <div class="feature-card__icon"><i class="fa-solid fa-headset"></i></div>
+            <div>
+                <h3>Review Complaints</h3>
+                <p>Check unresolved issues quickly through a searchable complaint log.</p>
+            </div>
+        </a>
+
+        <a class="feature-card" href="{{ url_for('add_notice') }}">
+            <div class="feature-card__icon"><i class="fa-solid fa-plus"></i></div>
+            <div>
+                <h3>Publish Notice</h3>
+                <p>Share updates with students using richer announcement cards.</p>
+            </div>
+        </a>
+    </div>
+
+    <div class="grid-two">
+        <section class="panel">
+            <div class="panel__header">
+                <div>
+                    <h2>Recent Complaints</h2>
+                    <p>Latest issues submitted by students</p>
+                </div>
+                <a class="btn btn-secondary" href="{{ url_for('admin_complaints') }}">View all</a>
+            </div>
+
+            <div class="table-wrap">
+                <table id="dashboard-complaints">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Complaint</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for complaint in complaints %}
+                        <tr>
+                            <td>{{ complaint.username }}</td>
+                            <td>{{ complaint.complaint }}</td>
+                            <td>
+                                <span class="badge {{ complaint.status|lower }}">
+                                    {{ complaint.status }}
+                                </span>
+                            </td>
+                            <td>{{ complaint.created_at.strftime('%d %b %Y') if complaint.created_at else '-' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <i class="fa-solid fa-inbox"></i>
+                                    <h3>No complaints yet</h3>
+                                    <p>The complaint feed will appear here once students start submitting issues.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="stack">
+            <div class="panel">
+                <div class="panel__header">
+                    <div>
+                        <h2>Recently Added Students</h2>
+                        <p>Quick visibility into latest student records</p>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Year</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in recent_students %}
+                            <tr>
+                                <td>
+                                    <div class="table-title">
+                                        <div class="profile-chip__avatar">{{ student.full_name[:1]|upper if student.full_name else student.username[:1]|upper }}</div>
+                                        <div>
+                                            <strong>{{ student.full_name }}</strong>
+                                            <span>{{ student.username }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ student.department }}</td>
+                                <td>{{ student.year }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="muted">No students available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel__header">
+                    <div>
+                        <h2>Admin Tips</h2>
+                        <p>Small UX upgrades included in this redesign</p>
+                    </div>
+                </div>
+                <div class="stack">
+                    <div class="feature-card">
+                        <div class="feature-card__icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <div>
+                            <h3>Instant search</h3>
+                            <p>Search students and complaints from table views using live filtering and query-based search.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                        <div>
+                            <h3>Responsive layout</h3>
+                            <p>The sidebar collapses cleanly on tablets and mobile with an overlay menu.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Students</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>Admin</h2>
+        <a href="/admin">Dashboard</a>
+        <a href="/admin/students" class="active">Students</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+        <div class="header">Student List</div>
+
+        {% if students and students|length > 0 %}
+        <table>
+            <tr>
+                <th>S.No</th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Phone</th>
+                <th>Department</th>
+                <th>Year</th>
+            </tr>
+
+            {% for s in students %}
+            <tr>
+                <!-- 🔥 SERIAL NUMBER -->
+                <td>{{ loop.index }}</td>
+
+                <td>{{ s.username }}</td>
+                <td>{{ s.full_name }}</td>
+                <td>{{ s.phone }}</td>
+                <td>{{ s.department }}</td>
+                <td>{{ s.year }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p style="color:red; font-weight:bold;">No students found.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>

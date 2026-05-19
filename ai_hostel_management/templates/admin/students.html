@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Students | Admin{% endblock %}
+{% block eyebrow %}Admin workspace{% endblock %}
+{% block page_title %}Student Directory{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel__header">
+        <div>
+            <h2>Students</h2>
+            <p>Browse and search student records with a cleaner table layout.</p>
+        </div>
+
+        <form method="GET" class="search-form">
+            <input class="search-input" type="search" name="search" value="{{ search }}" placeholder="Search by name, username, phone, or department" data-table-search="students-table">
+            <button class="btn btn-primary" type="submit">
+                <i class="fa-solid fa-filter"></i>
+                <span>Search</span>
+            </button>
+        </form>
+    </div>
+
+    <div class="table-wrap">
+        <table id="students-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Student</th>
+                    <th>Phone</th>
+                    <th>Department</th>
+                    <th>Year</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>
+                        <div class="table-title">
+                            <div class="profile-chip__avatar">{{ student.full_name[:1]|upper if student.full_name else student.username[:1]|upper }}</div>
+                            <div>
+                                <strong>{{ student.full_name }}</strong>
+                                <span>{{ student.username }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ student.phone }}</td>
+                    <td>{{ student.department }}</td>
+                    <td>{{ student.year }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="fa-solid fa-user-slash"></i>
+                            <h3>No students found</h3>
+                            <p>Try a different keyword or add student records to the database.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

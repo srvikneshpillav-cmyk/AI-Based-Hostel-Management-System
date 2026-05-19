@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance{% endblock %}
+{% block eyebrow %}Student portal{% endblock %}
+{% block page_title %}Attendance Report{% endblock %}
+
+{% block content %}
+<section class="dashboard-grid">
+    <div class="stats-grid">
+        <article class="stat-card tone-blue">
+            <div class="stat-card__icon"><i class="fa-solid fa-calendar-day"></i></div>
+            <p class="stat-card__label">Total Days</p>
+            <p class="stat-card__value">{{ total_days }}</p>
+            <p class="stat-card__meta">Attendance entries recorded</p>
+        </article>
+
+        <article class="stat-card tone-primary">
+            <div class="stat-card__icon"><i class="fa-solid fa-user-check"></i></div>
+            <p class="stat-card__label">Present Days</p>
+            <p class="stat-card__value">{{ present_days }}</p>
+            <p class="stat-card__meta">Days marked present</p>
+        </article>
+
+        <article class="stat-card tone-orange">
+            <div class="stat-card__icon"><i class="fa-solid fa-percent"></i></div>
+            <p class="stat-card__label">Attendance %</p>
+            <p class="stat-card__value">{{ percentage }}%</p>
+            <p class="stat-card__meta">Current attendance percentage</p>
+        </article>
+    </div>
+
+    <section class="panel">
+        <div class="panel__header">
+            <div>
+                <h2>Attendance History</h2>
+                <p>Detailed attendance entries listed by date.</p>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.date }}</td>
+                        <td>
+                            <span class="badge {{ 'approved' if record.status == 'Present' else 'rejected' }}">
+                                {{ record.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2">
+                            <div class="empty-state">
+                                <i class="fa-solid fa-user-clock"></i>
+                                <h3>No attendance records</h3>
+                                <p>Attendance details will appear here once records are added.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</section>
+{% endblock %}

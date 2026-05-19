@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}AI Hostel Management System{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% set is_admin = session.get('role') == 'admin' %}
+    {% set user_name = session.get('full_name', session.get('username', 'Guest')) %}
+    <div class="app-shell">
+        {% if session.get('role') %}
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar__brand">
+                <div class="sidebar__logo"><i class="fa-solid fa-building-shield"></i></div>
+                <div>
+                    <strong>Hostel AI</strong>
+                    <span>Management Suite</span>
+                </div>
+            </div>
+
+            <nav class="sidebar__nav">
+                {% if is_admin %}
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-link {% if request.path == '/admin' %}active{% endif %}">
+                    <i class="fa-solid fa-chart-line"></i><span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin_students') }}" class="nav-link {% if request.path == '/admin/students' %}active{% endif %}">
+                    <i class="fa-solid fa-users"></i><span>Students</span>
+                </a>
+                <a href="{{ url_for('admin_complaints') }}" class="nav-link {% if request.path == '/admin/complaints' %}active{% endif %}">
+                    <i class="fa-solid fa-circle-exclamation"></i><span>Complaints</span>
+                </a>
+                <a href="{{ url_for('admin_leaves') }}" class="nav-link {% if request.path == '/admin/leaves' %}active{% endif %}">
+                    <i class="fa-solid fa-calendar-check"></i><span>Leave Requests</span>
+                </a>
+                <a href="{{ url_for('admin_notices') }}" class="nav-link {% if request.path == '/admin/notices' %}active{% endif %}">
+                    <i class="fa-solid fa-bullhorn"></i><span>Notices</span>
+                </a>
+                <a href="{{ url_for('add_notice') }}" class="nav-link {% if request.path == '/admin/add-notice' %}active{% endif %}">
+                    <i class="fa-solid fa-plus"></i><span>Add Notice</span>
+                </a>
+                {% else %}
+                <a href="{{ url_for('student_dashboard') }}" class="nav-link {% if request.path == '/student' %}active{% endif %}">
+                    <i class="fa-solid fa-house"></i><span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('complaint') }}" class="nav-link {% if request.path == '/complaint' %}active{% endif %}">
+                    <i class="fa-solid fa-pen-to-square"></i><span>New Complaint</span>
+                </a>
+                <a href="{{ url_for('my_complaints') }}" class="nav-link {% if request.path == '/my-complaints' %}active{% endif %}">
+                    <i class="fa-solid fa-message"></i><span>My Complaints</span>
+                </a>
+                <a href="{{ url_for('apply_leave') }}" class="nav-link {% if request.path == '/apply-leave' %}active{% endif %}">
+                    <i class="fa-solid fa-paper-plane"></i><span>Apply Leave</span>
+                </a>
+                <a href="{{ url_for('leave_status') }}" class="nav-link {% if request.path == '/leave-status' %}active{% endif %}">
+                    <i class="fa-solid fa-list-check"></i><span>Leave Status</span>
+                </a>
+                <a href="{{ url_for('student_notices') }}" class="nav-link {% if request.path == '/notices' %}active{% endif %}">
+                    <i class="fa-solid fa-bell"></i><span>Notices</span>
+                </a>
+                <a href="{{ url_for('attendance') }}" class="nav-link {% if request.path == '/attendance' %}active{% endif %}">
+                    <i class="fa-solid fa-user-check"></i><span>Attendance</span>
+                </a>
+                {% endif %}
+            </nav>
+
+            <a href="{{ url_for('logout') }}" class="sidebar__logout">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+        </aside>
+        {% endif %}
+
+        <div class="page-shell">
+            {% if session.get('role') %}
+            <header class="topbar">
+                <div class="topbar__left">
+                    <button class="menu-toggle" type="button" data-sidebar-toggle aria-label="Toggle navigation">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div>
+                        <p class="eyebrow">{% block eyebrow %}Control center{% endblock %}</p>
+                        <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+                    </div>
+                </div>
+
+                <div class="topbar__right">
+                    <div class="topbar__search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="search" placeholder="Press Ctrl+K to search">
+                    </div>
+                    <div class="profile-chip">
+                        <div class="profile-chip__avatar">{{ user_name[:1]|upper }}</div>
+                        <div>
+                            <strong>{{ user_name }}</strong>
+                            <span>{{ 'Administrator' if is_admin else 'Student Portal' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            {% endif %}
+
+            <main class="page-content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category if category in ['success', 'error', 'warning', 'info'] else 'info' }}">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    {% if session.get('role') %}
+    <div class="sidebar-overlay" data-sidebar-overlay></div>
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
